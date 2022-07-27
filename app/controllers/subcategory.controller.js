@@ -1,9 +1,9 @@
-const categoryModel = require("../models/category.model.js");
+const subcategoryModel = require("../models/subcategory.model.js");
 
 exports.findAll = (req, res) => {
-    categoryModel.getAll((err, data) => {
+    subcategoryModel.getAll((err, data) => {
 
-        if(err){
+        if (err) {
             req.status(400).send({
                 status: 'error',
                 message: 'Ocorreu um erro ao realizar a requisição'
@@ -14,15 +14,13 @@ exports.findAll = (req, res) => {
 }
 
 exports.findByKey = (req, res) => {
-    categoryModel.getByKey(req.params.categoryKey, (err, data) => {
-        
-        if(err){
+    subcategoryModel.getByKey(req.params.subcategoryKey, (err, data) => {
+        if (err) {
             req.status(400).send({
                 status: 'error',
                 message: 'Ocorreu um erro ao realizar a requisição'
             })
         }
-
         res.status(200).send(data)
     })
 }

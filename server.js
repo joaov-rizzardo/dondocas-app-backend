@@ -19,6 +19,7 @@ app.get("/", (req, res) => {
 });
 
 require("./app/routes/category.routes.js")(app)
+require("./app/routes/subcategory.routes.js")(app)
 
 
 const PORT = process.env.PORT || 8080;
