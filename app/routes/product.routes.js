@@ -7,8 +7,8 @@ module.exports = app => {
 
     router.get('/get', categoryController.findAll)
 
-    router.get('/get/:categoryKey', categoryController.findByKey)
+    router.get('/get/:productCode', categoryController.findByKey)
 
-    app.use('/category', router);
+    app.use('/product', router);
   };
   

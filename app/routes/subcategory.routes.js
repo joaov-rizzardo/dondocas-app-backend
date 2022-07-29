@@ -3,9 +3,11 @@ module.exports = app => {
   
     var router = require("express").Router();
     
-    router.get('/', subcategoryController.findAll)
+    router.get('/', subcategoryController.sendApiStatus)
 
-    router.get('/:subcategoryKey', subcategoryController.findByKey)
+    router.get('/get', subcategoryController.findAll)
+
+    router.get('/get:subcategoryKey', subcategoryController.findByKey)
 
     app.use('/subcategory', router);
   };

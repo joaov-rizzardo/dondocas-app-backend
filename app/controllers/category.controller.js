@@ -1,3 +1,4 @@
+const e = require("express");
 const categoryModel = require("../models/category.model.js");
 
 exports.findAll = (req, res) => {
@@ -24,5 +25,11 @@ exports.findByKey = (req, res) => {
         }
 
         res.status(200).send(data)
+    })
+}
+
+exports.sendApiStatus = (req, res) => {
+    res.status(200).send({
+        message: 'The Category API is running!'
     })
 }
