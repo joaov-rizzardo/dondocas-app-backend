@@ -3,12 +3,26 @@ module.exports = app => {
   
     var router = require("express").Router();
     
-    //router.get('/', categoryController.sendApiStatus)
+    router.get('/', (req, res) => {
+      res.status(200).send({
+        status: 'success',
+        message: 'The product API is running'
+      })
+    })
 
-    //router.get('/get', categoryController.findAll)
+    router.post('/', (req, res) => {
+      res.status(200).send({
+        status: 'success',
+        message: 'The product API is running'
+      })
+    })
 
-    //router.get('/get/:productCode', categoryController.findByKey)
+    // ROTA PARA RETORNAR TODOS OS PRODUTOS CADASTRADOS
+    router.get('/get', productController.findAll)
 
+    router.get('/get/:productCode', productController.findByCode)
+
+    // ROTA PARA CRIAÇÃO DE PRODUTO
     router.post('/create', productController.create)
 
     app.use('/product', router);

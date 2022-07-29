@@ -9,7 +9,17 @@ exports.findAll = (req, res) => {
                 status: 'error',
                 message: 'Ocorreu um erro ao realizar a requisição'
             })
+            return
         }
+
+        if(!data.length){
+            res.status(404).send({
+                status: 'error',
+                message: 'Product data not found'
+            })
+            return
+        }
+
         res.status(200).send(data)
     })
 }
@@ -22,14 +32,18 @@ exports.findByKey = (req, res) => {
                 status: 'error',
                 message: 'Ocorreu um erro ao realizar a requisição'
             })
+            return
+        }
+
+        if(!data.length){
+            res.status(404).send({
+                status: 'error',
+                message: 'Product data not found'
+            })
+            return
         }
 
         res.status(200).send(data)
     })
 }
 
-exports.sendApiStatus = (req, res) => {
-    res.status(200).send({
-        message: 'The Category API is running!'
-    })
-}

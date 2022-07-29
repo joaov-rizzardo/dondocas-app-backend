@@ -1,14 +1,25 @@
 module.exports = app => {
-    const subcategoryController = require("../controllers/subcategory.controller.js");
-  
-    var router = require("express").Router();
-    
-    router.get('/', subcategoryController.sendApiStatus)
+  const subcategoryController = require("../controllers/subcategory.controller.js");
 
-    router.get('/get', subcategoryController.findAll)
+  var router = require("express").Router();
 
-    router.get('/get:subcategoryKey', subcategoryController.findByKey)
+  router.get('/', (req, res) => {
+    res.status(200).send({
+      status: 'success',
+      message: 'The subcategory API is running'
+    })
+  })
 
-    app.use('/subcategory', router);
-  };
-  
+  router.post('/', (req, res) => {
+    res.status(200).send({
+      status: 'success',
+      message: 'The subcategory API is running'
+    })
+  })
+
+  router.get('/get', subcategoryController.findAll)
+
+  router.get('/get:subcategoryKey', subcategoryController.findByKey)
+
+  app.use('/subcategory', router);
+};

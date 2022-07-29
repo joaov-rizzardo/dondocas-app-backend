@@ -3,7 +3,19 @@ module.exports = app => {
   
     var router = require("express").Router();
     
-    router.get('/', categoryController.sendApiStatus)
+    router.get('/', (req, res) => {
+      res.status(200).send({
+          status: 'success',
+          message: 'The category API is running'
+      })
+    })
+
+    router.post('/', (req, res) => {
+      res.status(200).send({
+          status: 'success',
+          message: 'The category API is running'
+      })
+    })
 
     router.get('/get', categoryController.findAll)
 

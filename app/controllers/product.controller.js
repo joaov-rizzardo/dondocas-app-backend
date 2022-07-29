@@ -1,23 +1,109 @@
-const productModel = require("../models/subcategory.model.js");
+const productModel = require("../models/product.model.js");
 
 exports.create = (req, res) => {
 
-    const requestKeys = Object.keys(req.body)
-    
-    if(!requestKeys.length){
+    const requestKeyValues = Object.entries(req.body)
+
+    // VERIFICA SE A REQUEST POSSUI UM BODY
+    if (!requestKeyValues.length) {
         res.status(400).send({
             status: 'error',
             message: 'The body content is empty'
         })
         return
     }
-    
-    if(!req.body.productCode){
+
+    // CAMPOS QUE SÃO OBRIGATÓRIO VIR NO BODY
+    const requiredFields = [
+        'productCode',
+        'productDescription',
+        'categoryKey',
+        'subcategoryKey',
+        'productCashPaymentValue',
+        'productDeferredPaymentValue',
+        'productPurchaseValue'
+    ]
+
+    // REALIZANDO VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
+    const invalidField = requiredFields.find(field => {
+
+        const property = requestKeyValues.find(element => {
+            if (element[0] == field) return element
+        })
+
+        if (!property || property[1] == '') {
+            return field;
+        }
+    })
+
+    if (invalidField) {
         res.status(400).send({
             status: 'error',
-            message: 'The property productCode has a invalid value'
-        }) 
+            message: `The property ${invalidField} is empty or not defined`
+        })
+        return
     }
-    console.log(requestKeys)
 
+    productModel.createProduct(req.body, (err, status) => {
+        if (err) {
+            console.log(err)
+            res.status(400).send({
+                status: 'error',
+                message: 'An error ocurred in the request'
+            })
+            return
+        }
+
+        if(status){
+            res.status(201).send({
+                status: "success",
+                message: "Product has been created successfully"
+            })
+        }
+        
+    })
+}
+
+exports.findAll = (req, res) => {
+    productModel.getAll((err, data) => {
+        if(err){
+            res.status(400).send({
+                status: 'error',
+                message: 'An error ocurred in the request'
+            })
+            return
+        }
+
+        if(!data.length){
+            res.status(404).send({
+                status: 'error',
+                message: 'Product data not found'
+            })
+            return
+        }
+
+        res.status(200).send(data)
+    })
+}
+
+exports.findByCode = (req, res) => {
+    productModel.getByCode(req.params.productCode, (err, data) => {
+        if(err){
+            res.status(400).send({
+                status : 'error',
+                message: 'An error ocurred in the request'
+            })
+            return
+        }
+        
+        if(!data.length){
+            res.status(404).send({
+                status: 'error',
+                message: 'Product data not found'
+            })
+            return
+        }
+
+        res.status(200).send(data)
+    })
 }
