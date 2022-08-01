@@ -73,33 +73,17 @@ exports.findAll = (req, res) => {
             })
             return
         }
-
-        if(!data.length){
-            res.status(404).send({
-                status: 'error',
-                message: 'Product data not found'
-            })
-            return
-        }
-
+        
         res.status(200).send(data)
     })
 }
 
 exports.findByCode = (req, res) => {
-    productModel.getByCode(req.params.productCode, (err, data) => {
+    productModel.getByCode(req.params.productCode, req.params.subcategory, (err, data) => {
         if(err){
             res.status(400).send({
                 status : 'error',
                 message: 'An error ocurred in the request'
-            })
-            return
-        }
-        
-        if(!data.length){
-            res.status(404).send({
-                status: 'error',
-                message: 'Product data not found'
             })
             return
         }

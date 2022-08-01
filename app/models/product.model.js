@@ -23,8 +23,8 @@ exports.getAll = result => {
     })
 }
 
-exports.getByCode = (productCode, result) => {
-    sql.query('SELECT * FROM product WHERE product_code = ?', [productCode], (err, res) => {
+exports.getByCode = (productCode, subcategory, result) => {
+    sql.query('SELECT * FROM product WHERE product_code = ? AND subcategory_key = ? ', [productCode, subcategory], (err, res) => {
         if(err){
             console.log(err)
             result(err, null)

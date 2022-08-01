@@ -20,7 +20,7 @@ module.exports = app => {
     // ROTA PARA RETORNAR TODOS OS PRODUTOS CADASTRADOS
     router.get('/get', productController.findAll)
 
-    router.get('/get/:productCode', productController.findByCode)
+    router.get('/get/:subcategory/:productCode', productController.findByCode)
 
     // ROTA PARA CRIAÇÃO DE PRODUTO
     router.post('/create', productController.create)

@@ -33,20 +33,6 @@ exports.findByKey = (req, res) => {
             return
         }
 
-        if(!data.length){
-            res.status(404).send({
-                status: 'error',
-                message: 'Product data not found'
-            })
-            return
-        }
-
         res.status(200).send(data)
-    })
-}
-
-exports.sendApiStatus = (req, res) => {
-    res.status(200).send({
-        message: 'The Category API is running!'
     })
 }
