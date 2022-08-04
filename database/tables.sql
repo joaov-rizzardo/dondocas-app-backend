@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS product_subcategory(
 );
 
 CREATE TABLE IF NOT EXISTS product(
-	product_code VARCHAR(10) NOT NULL PRIMARY KEY,
+	product_key INT PRIMARY KEY AUTO_INCREMENT,
+	product_code VARCHAR(10) NOT NULL,
     product_description VARCHAR(100) NOT NULL,
     category_key INT NOT NULL,
     subcategory_key INT NOT NULL,
@@ -28,3 +29,5 @@ CREATE TABLE IF NOT EXISTS product(
     FOREIGN KEY(category_key) REFERENCES product_category(category_key),
     FOREIGN KEY(subcategory_key) REFERENCES product_subcategory(subcategory_key)
 );
+
+CREATE INDEX idx_product_code ON product(product_code);

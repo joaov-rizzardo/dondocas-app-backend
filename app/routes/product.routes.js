@@ -17,6 +17,8 @@ module.exports = app => {
       })
     })
 
+    router.post('/update', productController.update)
+
     // ROTA PARA RETORNAR TODOS OS PRODUTOS CADASTRADOS
     router.get('/get', productController.findAll)
 
