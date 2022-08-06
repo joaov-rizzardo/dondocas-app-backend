@@ -19,6 +19,10 @@ module.exports = app => {
 
     router.post('/update', productController.update)
 
+    router.put('/change/status', productController.changeStatus)
+
+    router.delete('/delete/:product_key', productController.delete)
+
     // ROTA PARA RETORNAR TODOS OS PRODUTOS CADASTRADOS
     router.get('/get', productController.findAll)
 

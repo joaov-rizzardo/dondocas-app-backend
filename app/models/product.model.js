@@ -46,3 +46,23 @@ product_cash_payment_value = ?, product_deferred_payment_value = ?, product_purc
             result(null, true)
         })
 }
+
+exports.changeStatus = (data, result) => {
+    sql.query('UPDATE product SET product_status = ? WHERE product_key = ?', [data.productStatus, data.productKey], (err, res) => {
+        if (err) {
+            result(err, false)
+            return
+        }
+        result(null, true)
+    })
+}
+
+exports.deleteByKey = (product_key, result) => {
+    sql.query('DELETE FROM product WHERE product_key = ?', [product_key], (err, res) => {
+        if (err) {
+            result(err, false)
+            return
+        }
+        result(null, true)
+    })
+}

@@ -135,7 +135,6 @@ exports.update = (req, res) => {
 
     productModel.updateProduct(req.body, (err, status) => {
         if (err) {
-            console.log(err)
             res.status(400).send({
                 status: 'error',
                 message: 'An error ocurred in the request'
@@ -150,5 +149,71 @@ exports.update = (req, res) => {
             })
         }
 
+    })
+}
+
+exports.changeStatus = (req, res) => {
+    const requestKeyValues = Object.entries(req.body)
+
+    // VERIFICA SE A REQUEST POSSUI UM BODY
+    if (!requestKeyValues.length) {
+        res.status(400).send({
+            status: 'error',
+            message: 'The body content is empty'
+        })
+        return
+    }
+
+    // CAMPOS QUE SÃO OBRIGATÓRIO VIR NO BODY
+    const requiredFields = [
+        'productKey',
+        'productStatus'
+    ]
+
+    const invalidField = validateRequestFields(requiredFields, requestKeyValues)
+
+    if (invalidField) {
+        res.status(400).send({
+            status: 'error',
+            message: `The property ${invalidField} is empty or not defined`
+        })
+        return
+    }
+
+    productModel.changeStatus(req.body, (err, status) => {
+        if (err) {
+            res.status(400).send({
+                status: 'error',
+                message: 'An error ocurred in the request'
+            })
+            return
+        }
+
+        if (status) {
+            res.status(200).send({
+                status: "success",
+                message: "Product has been updated successfully"
+            })
+        }
+
+    })
+}
+
+exports.delete = (req, res) => {
+    productModel.deleteByKey(req.params.product_key, (err, status) => {
+        if (err) {
+            res.status(400).send({
+                status: 'error',
+                message: 'An error ocurred in the request'
+            })
+            return
+        }
+
+        if (status) {
+            res.status(200).send({
+                status: "success",
+                message: "Product has been deleted successfully"
+            })
+        }
     })
 }
