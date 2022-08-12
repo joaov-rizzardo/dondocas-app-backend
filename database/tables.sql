@@ -31,3 +31,10 @@ CREATE TABLE IF NOT EXISTS product(
 );
 
 CREATE INDEX idx_product_code ON product(product_code);
+
+CREATE TABLE IF NOT EXISTS payment_form(
+	payment_key INT PRIMARY KEY AUTO_INCREMENT,
+    payment_description VARCHAR(100) NOT NULL,
+    payment_discount_percent DECIMAL(10, 2) DEFAULT 0,
+    payment_type VARCHAR(1)
+)

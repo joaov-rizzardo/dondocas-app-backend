@@ -17,6 +17,7 @@ app.get("/", (req, res) => {
 require("./app/routes/category.routes.js")(app)
 require("./app/routes/subcategory.routes.js")(app)
 require("./app/routes/product.routes.js")(app)
+require("./app/routes/payment.routes.js")(app)
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
