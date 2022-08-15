@@ -1,7 +1,7 @@
-const paymentModel = require("../models/payment.model.js");
+const colorsModel = require("../models/colors.model.js");
 
 exports.findAll = (req, res) => {
-    paymentModel.getAll((err, data) => {
+    colorsModel.getAll((err, data) => {
 
         if (err) {
             res.status(400).send({

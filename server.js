@@ -18,6 +18,8 @@ require("./app/routes/category.routes.js")(app)
 require("./app/routes/subcategory.routes.js")(app)
 require("./app/routes/product.routes.js")(app)
 require("./app/routes/payment.routes.js")(app)
+require("./app/routes/colors.routes.js")(app)
+require("./app/routes/sizes.routes.js")(app)
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

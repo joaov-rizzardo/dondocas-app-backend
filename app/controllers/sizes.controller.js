@@ -1,7 +1,7 @@
-const paymentModel = require("../models/payment.model.js");
+const sizesModel = require("../models/sizes.model.js");
 
 exports.findAll = (req, res) => {
-    paymentModel.getAll((err, data) => {
+    sizesModel.getAll((err, data) => {
 
         if (err) {
             res.status(400).send({

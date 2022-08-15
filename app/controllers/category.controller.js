@@ -5,7 +5,7 @@ exports.findAll = (req, res) => {
     categoryModel.getAll((err, data) => {
 
         if(err){
-            req.status(400).send({
+            res.status(400).send({
                 status: 'error',
                 message: 'Ocorreu um erro ao realizar a requisição'
             })
@@ -28,7 +28,7 @@ exports.findByKey = (req, res) => {
     categoryModel.getByKey(req.params.categoryKey, (err, data) => {
         
         if(err){
-            req.status(400).send({
+            res.status(400).send({
                 status: 'error',
                 message: 'Ocorreu um erro ao realizar a requisição'
             })
