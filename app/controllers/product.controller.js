@@ -53,7 +53,6 @@ exports.create = (req, res) => {
 
     productModel.createProduct(req.body, (err, status) => {
         if (err) {
-            console.log(err)
             res.status(400).send({
                 status: 'error',
                 message: 'An error ocurred in the request'

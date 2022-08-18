@@ -1,5 +1,6 @@
 const e = require("express");
 const saleModel = require("../models/sale.model.js");
+const clientModel = require("../models/client.model.js");
 
 const validateProductPayload = payload => {
     payload = Object.entries(payload)
@@ -147,5 +148,24 @@ exports.create = (req, res) => {
     if (invalidRequest) {
         return false
     }
+
+    const requestPayload = req.body
+
+    const clientData = clientModel.getByFields(requestPayload.client.client_name, requestPayload.client.client_telephone, (err, data) => {
+        if(err){
+            res.status(400).send({
+                status: 'error',
+                message: 'An error ocurred in the request'
+            })
+            return
+        }
+
+        console.log(requestPayload)
+        return data
+    })
+
+    //console.log(clientData)
+
+
 
 }

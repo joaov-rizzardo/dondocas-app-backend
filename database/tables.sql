@@ -60,6 +60,10 @@ CREATE TABLE IF NOT EXISTS client(
     client_update_date DATETIME
 )
 
+CREATE INDEX idx_client_name ON client(client_name);
+
+CREATE INDEX idx_client_telephone ON client(client_telephone);
+
 CREATE TABLE IF NOT EXISTS sale (
 	sale_key BIGINT PRIMARY KEY AUTO_INCREMENT,
     client_key INT NOT NULL,
