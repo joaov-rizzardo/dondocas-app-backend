@@ -17,7 +17,7 @@ module.exports = app => {
       })
     })
   
-    router.post('/create', saleController.create)
+    router.post('/create', saleController.validateCreateRequest)
   
   
     app.use('/sale', router);

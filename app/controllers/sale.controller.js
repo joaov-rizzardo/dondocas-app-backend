@@ -1,41 +1,10 @@
 const e = require("express");
 const saleModel = require("../models/sale.model.js");
-const clientModel = require("../models/client.model.js");
+const url = require("../config/url.configs")
+const { default: axios } = require("axios");
 
-const validateProductPayload = payload => {
-    payload = Object.entries(payload)
-    // CAMPOS OBRIGATÓRIOS NA ESTRUTURA DE PRODUTOS
-    const requiredProductsFields = [
-        "product_code",
-        "product_description",
-        "category_key",
-        "subcategory_key",
-        "color_key",
-        "size_key",
-        "product_cost",
-        "product_quantity",
-        "product_unit_price",
-        "product_amount"
-    ]
+exports.validateCreateRequest = (req, res) => {
 
-    let returnFunction = true
-    for (let field of requiredProductsFields) {
-        let wantedField = payload.find(product => {
-            if (product[0] == field) {
-                return product[1]
-            }
-        })
-
-        if (wantedField == undefined || wantedField?.length == 0) {
-            returnFunction = field
-            break
-        }
-    }
-
-    return returnFunction
-}
-
-exports.create = (req, res) => {
     const requestKeyValues = Object.entries(req.body)
 
     // VERIFICA SE A REQUEST POSSUI UM BODY
@@ -46,12 +15,13 @@ exports.create = (req, res) => {
         })
         return
     }
-    
+
     // CAMPOS OBRIGATÓRIOS NO PAYLOAD A NIVEL DE CABEÇALHO
     const requiredFields = [
         "client",
         "payment_key",
-        "sale_amount",
+        "sale_net_amount",
+        "sale_gross_amount",
         "sale_cost",
         "products"
     ]
@@ -131,7 +101,7 @@ exports.create = (req, res) => {
                 break
             }
 
-            if(wantedField[1]?.unidentified_client){
+            if(!wantedField[1]?.unidentified_client){
                 if(wantedField[1]?.client_name == null || wantedField[1]?.client_name.length == 0){
                     res.status(400).send({
                         status: "error",
@@ -151,21 +121,173 @@ exports.create = (req, res) => {
 
     const requestPayload = req.body
 
-    const clientData = clientModel.getByFields(requestPayload.client.client_name, requestPayload.client.client_telephone, (err, data) => {
-        if(err){
-            res.status(400).send({
+    validateClient(requestPayload.client)
+    .then(clientKey => {
+        // SE O RETORNO FOR FALSE, OCORREU UM ERRO NO PROCESSAMENTO DO CLIENTE
+        if(clientKey === false){
+            res.status(500).send({
                 status: 'error',
-                message: 'An error ocurred in the request'
+                message: 'An error ocurred in the client proccess'
             })
             return
         }
 
-        console.log(requestPayload)
-        return data
+        const saleHeader = {
+            client_key : clientKey,
+            payment_key : requestPayload.payment_key,
+            sale_net_amount : requestPayload.sale_net_amount,
+            sale_gross_amount : requestPayload.sale_gross_amount,
+            sale_cost : requestPayload.sale_cost
+        }
+
+        // CRIANDO O CABEÇALHO DA VENDA
+        saleModel.createHeader(saleHeader, (err, data) => {
+            if(err){
+                console.log(err)
+                res.status(500).send({
+                    status: 'error',
+                    message: 'An error ocurred in the sale header create'
+                })
+                return
+            }
+            
+            // CHAVE RETORNADA PARA O CABEÇALHO CRIADO
+            const saleKey = data.insertId
+
+            const products = requestPayload.products.map(product => {
+                return [
+                    saleKey,
+                    product.product_code,
+                    product.product_description,
+                    product.category_key,
+                    product.subcategory_key,
+                    product.color_key,
+                    product.size_key,
+                    product.product_unit_cost,
+                    product.product_quantity,
+                    product.product_unit_amount
+                ]
+            })
+
+            // CRIA OS ITEMS PARA A SALE_KEY INFORMADA
+            saleModel.createItems(products, (err, data) => {
+                if(err){
+                    console.log(err)
+                    res.status(500).send({
+                        status: 'error',
+                        message: 'An error ocurred in the sale items create'
+                    })
+                    return
+                }
+
+                if(data.affectedRows > 0){
+                    res.status(201).send({
+                        status: 'success',
+                        message: 'Sale has been created'
+                    })
+
+                }else{
+                    res.status(500).send({
+                        status: 'error',
+                        message: 'An error ocurred in the sale items create'
+                    })
+                    return
+                }
+
+                
+            })
+        })
+        
     })
+}
 
-    //console.log(clientData)
+// VERIFICA EXISTÊNCIA DO CLIENTE
+// SE NÃO EXISTIR É CRIADO COM OS DADOS DO PAYLOAD
+// SE EXISTIR É ATUALIZADO
+// RETORNA O CLIENT_KEY
+const validateClient = async client => {
 
+    if(client.unidentified_client){
+        return 1
+    }else{
 
+        const response = await axios.post(`${url.loopback}/client/getByFields`, {
+            client_name : client.client_name,
+            client_telephone: client.client_telephone
+        }).catch(error => {
+            console.log(error)
+            return false
 
+        })
+
+        const clientData = response.data
+
+        // SE RETORNAR O CLIENTE, ATUALIZA COM OS DADOS INFORMADOS
+        if(clientData.length > 0){
+            
+            const clientKey = clientData[0].client_key
+
+            const updatedClient = await axios.put(`${url.loopback}/client/update`, {
+                client_key : clientKey,
+                client_name: client.client_name,
+                client_telephone: client.client_telephone
+            }).catch(error => {
+                console.log(error)
+                return false
+            })
+
+            if(updatedClient.data.affectedRows >= 1){
+                return clientKey
+            }else{
+                return false
+            }
+            
+        // SE NÃO RETORNAR NENHUM CLIENTE, UM SERÁ CRIADO COM OS DADOS INFORMADOS
+        }else{
+            const createdClient = await axios.post(`${url.loopback}/client/create`, {
+                client_name : client.client_name,
+                client_telephone: client.client_telephone
+            }).catch(error => {
+                console.log(error)
+                return false
+            })
+
+            return createdClient.data.insertId
+        }
+    }
+}
+
+const validateProductPayload = payload => {
+    
+    payload = Object.entries(payload)
+
+    // CAMPOS OBRIGATÓRIOS NA ESTRUTURA DE PRODUTOS
+    const requiredProductsFields = [
+        "product_code",
+        "product_description",
+        "category_key",
+        "subcategory_key",
+        "color_key",
+        "size_key",
+        "product_unit_cost",
+        "product_quantity",
+        "product_unit_amount"
+    ]
+
+    let returnFunction = true
+
+    for (let field of requiredProductsFields) {
+        let wantedField = payload.find(product => {
+            if (product[0] == field) {
+                return product[1]
+            }
+        })
+
+        if (wantedField == undefined || wantedField?.length == 0) {
+            returnFunction = field
+            break
+        }
+    }
+
+    return returnFunction
 }
