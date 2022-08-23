@@ -16,9 +16,10 @@ module.exports = app => {
         message: 'The colors API is running'
       })
     })
+
+    router.post('/get', saleController.getSaleByDate)
   
     router.post('/create', saleController.validateCreateRequest)
-  
   
     app.use('/sale', router);
   };

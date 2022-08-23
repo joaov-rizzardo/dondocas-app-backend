@@ -291,3 +291,37 @@ const validateProductPayload = payload => {
 
     return returnFunction
 }
+
+exports.getSaleByDate = (req, res) => {
+
+    if(!req.body){
+        res.status(400).send({
+            status: 'error',
+            message: 'Invalid request body'
+        })
+
+        return
+    }
+
+    if(!req.body.saleDate || req.body?.saleDate?.length == 0){
+        res.status(400).send({
+            status: 'error',
+            message: 'The property saleDate is not defined or has a invalid value'
+        })
+        return
+    }
+
+    saleModel.getSaleHeader(req.body.saleDate, (err, data) => {
+
+        if(err){
+            res.status(500).send({
+                status: 'error',
+                message: 'Internal server error'
+            })
+            return
+        }
+
+        res.status(200).send(data)
+    })
+
+}
