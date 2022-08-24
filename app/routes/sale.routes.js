@@ -18,6 +18,8 @@ module.exports = app => {
     })
 
     router.post('/get', saleController.getSaleByDate)
+
+    router.post('/get/dailyInfo', saleController.getDailyInfo)
   
     router.post('/create', saleController.validateCreateRequest)
   

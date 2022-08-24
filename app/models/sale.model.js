@@ -58,3 +58,14 @@ const getSaleItems = (sale_key) => {
     })
 
 }
+
+exports.getDailyInfo = (saleDate, result) => {
+    sql.query("SELECT IFNULL(SUM(sale_net_amount), 0) AS 'grossAmount', IFNULL(SUM((sale_net_amount - sale_cost)), 0) AS 'netAmount', IFNULL(SUM(sale_cost), 0) AS 'cost' FROM SALE WHERE sale_date BETWEEN ? AND ?", [saleDate + ' 00:00:00', saleDate + ' 23:59:59'],  (err, res) => {
+        if (err) {
+            result(err, null)
+            return
+        }
+
+        result(null, res)
+    })
+}
