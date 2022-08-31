@@ -92,7 +92,7 @@ exports.validateCreateRequest = (req, res) => {
                 break
             }
 
-            if(wantedField[1]?.unidentified_client == null || typeof wantedField[1]?.unidentified_client !== 'boolean'){
+            if(wantedField[1].unidentified_client == null || typeof wantedField[1].unidentified_client !== 'boolean'){
                 res.status(400).send({
                     status: "error",
                     message: `The property unidentified_client is not defined or has invalid value`
@@ -101,7 +101,7 @@ exports.validateCreateRequest = (req, res) => {
                 break
             }
 
-            if(!wantedField[1]?.unidentified_client){
+            if(!wantedField[1].unidentified_client){
                 if(wantedField[1]?.client_name == null || wantedField[1]?.client_name.length == 0){
                     res.status(400).send({
                         status: "error",
@@ -283,7 +283,7 @@ const validateProductPayload = payload => {
             }
         })
 
-        if (wantedField == undefined || wantedField?.length == 0) {
+        if (wantedField == undefined || wantedField.length == 0) {
             returnFunction = field
             break
         }
@@ -303,7 +303,7 @@ exports.getSaleByDate = (req, res) => {
         return
     }
 
-    if(!req.body.saleDate || req.body?.saleDate?.length == 0){
+    if(!req.body.saleDate || req.body.saleDate?.length == 0){
         res.status(400).send({
             status: 'error',
             message: 'The property saleDate is not defined or has a invalid value'
@@ -337,7 +337,7 @@ exports.getDailyInfo = (req, res) => {
         return
     }
 
-    if(!req.body.saleDate || req.body?.saleDate?.length == 0){
+    if(!req.body.saleDate || req.body.saleDate.length == 0){
         res.status(400).send({
             status: 'error',
             message: 'The property saleDate is not defined or has a invalid value'

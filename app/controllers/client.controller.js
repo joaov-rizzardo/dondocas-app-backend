@@ -3,7 +3,7 @@ const clientModel = require("../models/client.model.js");
 
 exports.findByFields = (req, res) => {
 
-    if (req.body?.client_name.length == 0 && req.body?.client_telephone.length == 0) {
+    if (req.body.client_name.length == 0 && req.body.client_telephone.length == 0) {
         res.status(400).send({
             status: 'error',
             message: 'Required fields is not defined or has invalid value'
@@ -11,7 +11,7 @@ exports.findByFields = (req, res) => {
         return
     }
 
-    clientModel.getByFields(req.body?.client_name, req.body?.client_telephone, (err, data) => {
+    clientModel.getByFields(req.body.client_name, req.body.client_telephone, (err, data) => {
         if (err) {
             res.status(400).send({
                 status: 'error',
@@ -27,7 +27,7 @@ exports.findByFields = (req, res) => {
 
 exports.create = (req, res) => {
 
-    if (req.body?.client_name.length == 0 && req.body?.client_telephone.length == 0) {
+    if (req.body.client_name.length == 0 && req.body.client_telephone.length == 0) {
         res.status(400).send({
             status: 'error',
             message: 'Required fields is not defined or has invalid value'
@@ -35,7 +35,7 @@ exports.create = (req, res) => {
         return
     }
 
-    clientModel.createClient(req.body?.client_name, req.body?.client_telephone, (err, data) => {
+    clientModel.createClient(req.body.client_name, req.body.client_telephone, (err, data) => {
         if (err) {
             res.status(400).send({
                 status: 'error',
@@ -50,7 +50,7 @@ exports.create = (req, res) => {
 
 exports.update = (req, res) => {
     
-    if (!req.body?.client_key || (req.body?.client_name.length == 0 && req.body?.client_telephone.length == 0)) {
+    if (!req.body.client_key || (req.body.client_name.length == 0 && req.body.client_telephone.length == 0)) {
         res.status(400).send({
             status: 'error',
             message: 'Required fields is not defined or has invalid value'

@@ -1,3 +1,3 @@
 module.exports = {
-    loopback: 'http://localhost:8000'
+    loopback: process.env.LOOPBACK
 }
