@@ -10,14 +10,6 @@ exports.findAll = (req, res) => {
             })
             return
         }
-
-        if(!data.length){
-            res.status(404).send({
-                status: 'error',
-                message: 'Product data not found'
-            })
-            return
-        }
         
         res.status(200).send(data)
     })
