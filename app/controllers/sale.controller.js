@@ -46,7 +46,7 @@ exports.validateCreateRequest = (req, res) => {
         }
 
         if (wantedField[0] != 'products' && wantedField[0] != 'client') {
-            if (wantedField[1]?.length == 0) {
+            if (wantedField[1].length == 0) {
                 res.status(400).send({
                     status: "error",
                     message: `The property ${field} has invalid value`
@@ -102,7 +102,7 @@ exports.validateCreateRequest = (req, res) => {
             }
 
             if(!wantedField[1].unidentified_client){
-                if(wantedField[1]?.client_name == null || wantedField[1]?.client_name.length == 0){
+                if(wantedField[1].client_name == null || wantedField[1].client_name.length == 0){
                     res.status(400).send({
                         status: "error",
                         message: `The property client_name is not defined or has invalid value`
@@ -303,7 +303,7 @@ exports.getSaleByDate = (req, res) => {
         return
     }
 
-    if(!req.body.saleDate || req.body.saleDate?.length == 0){
+    if(!req.body.saleDate || req.body.saleDate.length == 0){
         res.status(400).send({
             status: 'error',
             message: 'The property saleDate is not defined or has a invalid value'
