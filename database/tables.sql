@@ -90,4 +90,25 @@ CREATE TABLE IF NOT EXISTS sale_item (
     FOREIGN KEY (sale_key) REFERENCES sale(sale_key),
     FOREIGN KEY (color_key) REFERENCES colors(color_key),
     FOREIGN KEY (size_key) REFERENCES product_sizes(size_key)
-)
+);
+
+CREATE TABLE IF NOT EXISTS expense_category(
+	category_key TINYINT PRIMARY KEY AUTO_INCREMENT,
+    category_description VARCHAR(15) NOT NULL,
+    category_status VARCHAR(1) DEFAULT 'A',
+    category_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_category_status ON expense_category(category_status);
+
+CREATE TABLE IF NOT EXISTS expense (
+  `expense_key` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `expense_description` varchar(200) NOT NULL,
+  `category_key` tinyint(4) NOT NULL,
+  `expense_value` decimal(15,2) NOT NULL,
+  `expense_status` varchar(1) DEFAULT 'A',
+  `expense_date` datetime DEFAULT current_timestamp(),
+  FOREIGN KEY (category_key) REFERENCES expense_category(category_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE INDEX idx_expense_status ON expense(expense_status);
