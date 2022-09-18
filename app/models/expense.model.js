@@ -47,3 +47,25 @@ exports.getExpenses = (result, expenseYear = false, expenseMonth = false) => {
         result(null, res)
     })
 }
+
+exports.createExpense = (params, result) => {
+    sql.query("INSERT INTO expense SET expense_description = ?, category_key = ?, expense_value = ?", [params.expenseDescription, params.categoryKey, params.expenseValue], (err, res) => {
+        if(err){
+            result(err, null)
+            return
+        }
+
+        result(null, true)
+    })
+}
+
+exports.updateExpense = (params, result) => {
+    sql.query("UPDATE expense SET expense_description = ?, category_key = ?, expense_value = ? WHERE expense_key = ?", [params.expenseDescription, params.categoryKey, params.expenseValue, params.expenseKey], (err, res) => {
+        if(err){
+            result(err, null)
+            return
+        }
+
+        result(null, true)
+    })
+}

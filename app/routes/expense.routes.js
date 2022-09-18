@@ -23,7 +23,9 @@ module.exports = app => {
 
     router.post('/create', expenseController.createExpense)
 
-    router.get('/get/:month/:year', expenseController.findExpenses)
+    router.get('/get/:year/:month', expenseController.findExpenses)
+
+    router.put('/update', expenseController.updateExpense)
 
     router.post('/category/create', expenseController.createCategory)
 

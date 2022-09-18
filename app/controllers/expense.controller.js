@@ -96,12 +96,86 @@ exports.createExpense = (req, res) => {
                 return bodyField
             }
         })
-
         
         if(!searchedField || searchedField[1].length == 0){
-                
+            res.status(200).send({
+                status: 'error',
+                message: `The property ${field} is not defined or has invalid value`
+            })
+            stopCondition = true
+            return false
         }
     }
 
+    if(stopCondition === true){
+        return
+    }
+
+    expenseModel.createExpense(req.body, (err, data) => {
+        if(err){
+            res.status(500).send({
+                status: 'error',
+                message: 'An internal error ocurred in the request'
+            })
+            return
+        }
+
+        res.status(201).send({
+            status: 'success',
+            message: 'The expense has been created'
+        })
+    })
+}
+
+exports.updateExpense = (req, res) => {
+    if(!req.body){
+        res.status(400).send({
+            status: 'error',
+            message: 'The content body is empty'
+        })
+        return
+    }
+
+    const requiredFields = ['expenseKey', 'expenseDescription', 'categoryKey', 'expenseValue']
+
+    const requestedBody = Object.entries(req.body)
+
+    let stopCondition = false
+
+    for(field of requiredFields){
+        const searchedField = requestedBody.find(bodyField => {
+            if(bodyField[0] == field){
+                return bodyField
+            }
+        })
+        
+        if(!searchedField || searchedField[1].length == 0){
+            res.status(200).send({
+                status: 'error',
+                message: `The property ${field} is not defined or has invalid value`
+            })
+            stopCondition = true
+            return false
+        }
+    }
+
+    if(stopCondition === true){
+        return
+    }
+
+    expenseModel.updateExpense(req.body, (err, data) => {
+        if(err){
+            res.status(500).send({
+                status: 'error',
+                message: 'An internal error ocurred in the request'
+            })
+            return
+        }
+
+        res.status(200).send({
+            status: 'success',
+            message: 'The expense has been updated'
+        })
+    })
 }
 
