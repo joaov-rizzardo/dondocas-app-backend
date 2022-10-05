@@ -28,7 +28,7 @@ exports.getExpenses = (result, expenseYear = false, expenseMonth = false) => {
     
     const params = []
 
-    let query = "SELECT * FROM expense WHERE expense_status = 'A'"
+    let query = "SELECT * FROM vw_expense WHERE expense_status = 'A'"
 
     if(expenseYear !== false && expenseMonth !==  false){
         const condition = `${expenseYear}-${expenseMonth}%`
