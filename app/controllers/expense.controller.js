@@ -179,3 +179,85 @@ exports.updateExpense = (req, res) => {
     })
 }
 
+exports.inactivateExpense = (req, res) => {
+    expenseModel.inactivateExpense(req.params.expenseKey, (err, data) => {
+        if(err){
+            res.status(500).send({
+                status: 'error',
+                message: 'An internal error ocurred in the request'
+            })
+            return
+        }
+
+        res.status(200).send({
+            status: 'success',
+            message: 'The expense has been inactivated'
+        })
+    })
+}
+
+exports.getTotalExpensesByMonth = (req, res) => {
+
+    console.log(req)
+    expenseModel.findTotalExpensesByMonth(req.params.year, req.params.month, (err, data) => {
+        if(err){
+            res.status(500).send({
+                status: 'error',
+                message: 'An internal error ocurred in the request'
+            })
+            return
+        }
+        
+        res.status(200).send(data[0])
+    })
+}
+
+exports.getAmountByCategory = (req, res) => {
+
+    let params = {
+        year: '',
+        month: '',
+        startDate: '',
+        finishDate: ''
+    }
+
+    // VALIDAÇÃO APENAS QUANDO FOR UMA REQUISIÇÃO POST
+    if(req.method == 'POST'){
+        if(!req.body){
+            res.status(400).send({
+                status: 'error',
+                message: 'The content body is invalid or has a invalid value'
+            })
+            return
+        }
+
+        if(req.body.startDate == undefined || req.body.startDate == '' || req.body.finishDate == '' || req.body.finishDate == undefined){
+            res.status(400).send({
+                status: 'error',
+                message: 'The required field is not defined or has a invalid value'
+            })
+            return
+        }
+
+        params.startDate = req.body.startDate
+        params.finishDate = req.body.finishDate
+    }
+
+    if(req.params.year && req.params.month){
+        params.year = req.params.year
+        params.month = req.params.month
+    }
+
+    expenseModel.findAmountByCategory(params, (err, data) => {
+        if(err){
+            console.log(err)
+            res.status(500).send({
+                status: 'error',
+                message: 'An internal error ocurred in the request'
+            })
+            return
+        }
+        res.status(200).send(data)
+    })
+}
+

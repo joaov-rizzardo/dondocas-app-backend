@@ -27,7 +27,17 @@ module.exports = app => {
 
     router.put('/update', expenseController.updateExpense)
 
+    router.put('/inactivate/:expenseKey', expenseController.inactivateExpense)
+
     router.post('/category/create', expenseController.createCategory)
+
+    router.get('/expensePerMonth/:year/:month', expenseController.getTotalExpensesByMonth)
+
+    router.get('/amountPerCategory/:year/:month', expenseController.getAmountByCategory)
+
+    router.get('/amountPerCategory', expenseController.getAmountByCategory)
+
+    router.post('/amountPerCategory', expenseController.getAmountByCategory)
 
     app.use('/expense', router);
   };
