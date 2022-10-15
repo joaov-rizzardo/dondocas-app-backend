@@ -58,8 +58,8 @@ exports.createCategory = (req, res) => {
 }
 
 exports.findExpenses = (req, res) => {
-    const month = req.params.month ?? false
-    const year = req.params.year ?? false
+    const month = (req.params.month != null || req.params.month != undefined) ? req.params.month : false
+    const year = (req.params.year != null || req.params.year != undefined) ? req.params.year : false
     expenseModel.getExpenses((err, data) => {
         if (err) {
             console.log(err)
