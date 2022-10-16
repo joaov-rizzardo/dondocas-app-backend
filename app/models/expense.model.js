@@ -49,7 +49,7 @@ exports.getExpenses = (result, expenseYear = false, expenseMonth = false) => {
 }
 
 exports.createExpense = (params, result) => {
-    sql.query("INSERT INTO expense SET expense_description = ?, category_key = ?, expense_value = ?", [params.expenseDescription, params.categoryKey, params.expenseValue], (err, res) => {
+    sql.query("INSERT INTO expense SET expense_description = ?, category_key = ?, expense_value = ?, expense_date = ?", [params.expenseDescription, params.categoryKey, params.expenseValue, params.expenseDate], (err, res) => {
         if(err){
             result(err, null)
             return

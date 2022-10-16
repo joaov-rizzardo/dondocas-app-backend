@@ -1,8 +1,8 @@
 const sql = require("./db.js");
 
 exports.createHeader = (data, result) => {
-
-    sql.query("INSERT INTO sale(client_key, payment_key, sale_net_amount, sale_gross_amount, sale_cost) VALUES (?)", [[data.client_key, data.payment_key, data.sale_net_amount, data.sale_gross_amount, data.sale_cost]], (err, res) => {
+    
+    sql.query("INSERT INTO sale(client_key, payment_key, sale_net_amount, sale_gross_amount, sale_cost, sale_date) VALUES (?)", [[data.client_key, data.payment_key, data.sale_net_amount, data.sale_gross_amount, data.sale_cost, data.sale_date]], (err, res) => {
         if (err) {
             result(err, null)
             return

@@ -23,6 +23,7 @@ exports.validateCreateRequest = (req, res) => {
         "sale_net_amount",
         "sale_gross_amount",
         "sale_cost",
+        "sale_date",
         "products"
     ]
 
@@ -137,7 +138,8 @@ exports.validateCreateRequest = (req, res) => {
             payment_key : requestPayload.payment_key,
             sale_net_amount : requestPayload.sale_net_amount,
             sale_gross_amount : requestPayload.sale_gross_amount,
-            sale_cost : requestPayload.sale_cost
+            sale_cost : requestPayload.sale_cost,
+            sale_date : requestPayload.sale_date
         }
 
         // CRIANDO O CABEÇALHO DA VENDA

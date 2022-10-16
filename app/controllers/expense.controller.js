@@ -84,7 +84,7 @@ exports.createExpense = (req, res) => {
         return
     }
 
-    const requiredFields = ['expenseDescription', 'categoryKey', 'expenseValue']
+    const requiredFields = ['expenseDescription', 'categoryKey', 'expenseValue', 'expenseDate']
 
     const requestedBody = Object.entries(req.body)
 
