@@ -1,7 +1,7 @@
 const sql = require("./db.js");
 
 exports.createHeader = (data, result) => {
-    
+
     sql.query("INSERT INTO sale(client_key, payment_key, sale_net_amount, sale_gross_amount, sale_cost, sale_date) VALUES (?)", [[data.client_key, data.payment_key, data.sale_net_amount, data.sale_gross_amount, data.sale_cost, data.sale_date]], (err, res) => {
         if (err) {
             result(err, null)
@@ -21,7 +21,7 @@ exports.createItems = (products, result) => {
     })
 }
 
-exports.getSaleHeader =  (saleDate, result) => {
+exports.getSaleHeader = (saleDate, result) => {
     sql.query("SELECT s.*, date_format(s.sale_date, '%H:%i:%s') AS 'sale_hour', c.client_name, pf.payment_description FROM sale AS s INNER JOIN payment_form as pf ON pf.payment_key = s.payment_key INNER JOIN client AS c ON c.client_key = s.client_key WHERE sale_date BETWEEN ? AND ? ORDER BY sale_date DESC", [saleDate + ' 00:00:00', saleDate + ' 23:59:59'], async (err, res) => {
         if (err) {
             result(err, null)
@@ -30,7 +30,7 @@ exports.getSaleHeader =  (saleDate, result) => {
 
         let sales = []
 
-        for(const sale of res){
+        for (const sale of res) {
             const items = await getSaleItems(sale.sale_key)
 
             const salePayload = {
@@ -60,7 +60,29 @@ const getSaleItems = (sale_key) => {
 }
 
 exports.getDailyInfo = (saleDate, result) => {
-    sql.query("SELECT IFNULL(SUM(sale_net_amount), 0) AS 'grossAmount', IFNULL(SUM((sale_net_amount - sale_cost)), 0) AS 'netAmount', IFNULL(SUM(sale_cost), 0) AS 'cost' FROM sale WHERE sale_date BETWEEN ? AND ?", [saleDate + ' 00:00:00', saleDate + ' 23:59:59'],  (err, res) => {
+    sql.query("SELECT IFNULL(SUM(sale_net_amount), 0) AS 'grossAmount', IFNULL(SUM((sale_net_amount - sale_cost)), 0) AS 'netAmount', IFNULL(SUM(sale_cost), 0) AS 'cost' FROM sale WHERE sale_date BETWEEN ? AND ?", [saleDate + ' 00:00:00', saleDate + ' 23:59:59'], (err, res) => {
+        if (err) {
+            result(err, null)
+            return
+        }
+
+        result(null, res)
+    })
+}
+
+exports.getDailySales = (startDate, finishDate, result) => {
+    sql.query("SELECT DATE_FORMAT(sale_date, '%d/%m/%Y') AS 'date', SUM(sale_net_amount) AS 'amount' FROM sale WHERE sale_date BETWEEN ? AND ? GROUP BY DATE_FORMAT(sale_date, '%d/%m/%Y') ORDER BY 'date' ASC", [startDate + ' 00:00:00', finishDate + ' 23:59:59'], (err, res) => {
+        if (err) {
+            result(err, null)
+            return
+        }
+
+        result(null, res)
+    })
+}
+
+exports.getSalePerWeekDay = (startDate, finishDate, result) => {
+    sql.query("SELECT (CASE WHEN WEEKDAY(sale_date) = 0 THEN 'Segunda Feira' WHEN WEEKDAY(sale_date) = 1 THEN 'Terça Feira' WHEN WEEKDAY(sale_date) = 2 THEN 'Quarta Feira' WHEN WEEKDAY(sale_date) = 3 THEN 'Quinta Feira' WHEN WEEKDAY(sale_date) = 4 THEN 'Sexta Feira' WHEN WEEKDAY(sale_date) = 5 THEN 'Sábado' WHEN WEEKDAY(sale_date) = 6 THEN 'Domingo' END ) AS 'weekday', ROUND(AVG(sale_net_amount), 2) AS 'amount'  FROM sale WHERE sale_date BETWEEN ? AND ? GROUP BY WEEKDAY(sale_date) ORDER BY WEEKDAY(sale_date) ASC", [startDate + ' 00:00:00', finishDate + ' 23:59:59'], (err, res) => {
         if (err) {
             result(err, null)
             return

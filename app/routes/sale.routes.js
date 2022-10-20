@@ -22,6 +22,10 @@ module.exports = app => {
     router.post('/get/dailyInfo', saleController.getDailyInfo)
   
     router.post('/create', saleController.validateCreateRequest)
+
+    router.post('/dailySales', saleController.findDailySales)
+
+    router.post('/salePerWeekday', saleController.findSalePerWeekday)
   
     app.use('/sale', router);
   };

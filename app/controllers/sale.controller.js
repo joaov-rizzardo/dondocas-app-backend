@@ -360,3 +360,65 @@ exports.getDailyInfo = (req, res) => {
         res.status(200).send(data[0])
     })
 }
+
+exports.findDailySales = (req, res) => {
+    if(!req.body){
+        res.status(400).send({
+            status: 'error',
+            message: 'Invalid request body'
+        })
+        return
+    }
+
+    if(req.body.startDate.length == 0 || req.body.finishDate.length == 0){
+        res.status(400).send({
+            status: 'error',
+            message: 'Required fields is not defined or has invalid value'
+        })
+        return
+    }
+
+    saleModel.getDailySales(req.body.startDate, req.body.finishDate, (err, data) => {
+
+        if(err){
+            res.status(500).send({
+                status: 'error',
+                message: 'Internal server error'
+            })
+            return
+        }
+
+        res.status(200).send(data)
+    })
+}
+
+exports.findSalePerWeekday = (req, res) => {
+    if(!req.body){
+        res.status(400).send({
+            status: 'error',
+            message: 'Invalid request body'
+        })
+        return
+    }
+
+    if(req.body.startDate.length == 0 || req.body.finishDate.length == 0){
+        res.status(400).send({
+            status: 'error',
+            message: 'Required fields is not defined or has invalid value'
+        })
+        return
+    }
+
+    saleModel.getSalePerWeekDay(req.body.startDate, req.body.finishDate, (err, data) => {
+
+        if(err){
+            res.status(500).send({
+                status: 'error',
+                message: 'Internal server error'
+            })
+            return
+        }
+
+        res.status(200).send(data)
+    })
+}
