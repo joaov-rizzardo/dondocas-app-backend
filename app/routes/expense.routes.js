@@ -39,6 +39,8 @@ module.exports = app => {
 
     router.post('/amountPerCategory', expenseController.getAmountByCategory)
 
+    router.post('/totalExpensePerPeriod', expenseController.findTotalExpensePerPeriod)
+
     app.use('/expense', router);
   };
   

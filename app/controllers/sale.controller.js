@@ -56,7 +56,7 @@ exports.validateCreateRequest = (req, res) => {
                 break
             }
 
-        } else if(wantedField[0] == 'products'){
+        } else if (wantedField[0] == 'products') {
 
             // SE O CAMPO DE PRODUTOS NÃO FOR UM ARRAY, O FORMATO É INVÁLIDO
             if (!Array.isArray(wantedField[1])) {
@@ -83,8 +83,8 @@ exports.validateCreateRequest = (req, res) => {
                     break
                 }
             }
-        }else if(wantedField[0] == 'client'){
-            if(typeof wantedField[1] !== 'object'){
+        } else if (wantedField[0] == 'client') {
+            if (typeof wantedField[1] !== 'object') {
                 res.status(400).send({
                     status: "error",
                     message: `The property ${field} is not object`
@@ -93,7 +93,7 @@ exports.validateCreateRequest = (req, res) => {
                 break
             }
 
-            if(wantedField[1].unidentified_client == null || typeof wantedField[1].unidentified_client !== 'boolean'){
+            if (wantedField[1].unidentified_client == null || typeof wantedField[1].unidentified_client !== 'boolean') {
                 res.status(400).send({
                     status: "error",
                     message: `The property unidentified_client is not defined or has invalid value`
@@ -102,8 +102,8 @@ exports.validateCreateRequest = (req, res) => {
                 break
             }
 
-            if(!wantedField[1].unidentified_client){
-                if(wantedField[1].client_name == null || wantedField[1].client_name.length == 0){
+            if (!wantedField[1].unidentified_client) {
+                if (wantedField[1].client_name == null || wantedField[1].client_name.length == 0) {
                     res.status(400).send({
                         status: "error",
                         message: `The property client_name is not defined or has invalid value`
@@ -123,84 +123,84 @@ exports.validateCreateRequest = (req, res) => {
     const requestPayload = req.body
 
     validateClient(requestPayload.client)
-    .then(clientKey => {
-        // SE O RETORNO FOR FALSE, OCORREU UM ERRO NO PROCESSAMENTO DO CLIENTE
-        if(clientKey === false){
-            res.status(500).send({
-                status: 'error',
-                message: 'An error ocurred in the client proccess'
-            })
-            return
-        }
-
-        const saleHeader = {
-            client_key : clientKey,
-            payment_key : requestPayload.payment_key,
-            sale_net_amount : requestPayload.sale_net_amount,
-            sale_gross_amount : requestPayload.sale_gross_amount,
-            sale_cost : requestPayload.sale_cost,
-            sale_date : requestPayload.sale_date
-        }
-
-        // CRIANDO O CABEÇALHO DA VENDA
-        saleModel.createHeader(saleHeader, (err, data) => {
-            if(err){
-                console.log(err)
+        .then(clientKey => {
+            // SE O RETORNO FOR FALSE, OCORREU UM ERRO NO PROCESSAMENTO DO CLIENTE
+            if (clientKey === false) {
                 res.status(500).send({
                     status: 'error',
-                    message: 'An error ocurred in the sale header create'
+                    message: 'An error ocurred in the client proccess'
                 })
                 return
             }
-            
-            // CHAVE RETORNADA PARA O CABEÇALHO CRIADO
-            const saleKey = data.insertId
 
-            const products = requestPayload.products.map(product => {
-                return [
-                    saleKey,
-                    product.product_code,
-                    product.product_description,
-                    product.category_key,
-                    product.subcategory_key,
-                    product.color_key,
-                    product.size_key,
-                    product.product_unit_cost,
-                    product.product_quantity,
-                    product.product_unit_amount
-                ]
-            })
+            const saleHeader = {
+                client_key: clientKey,
+                payment_key: requestPayload.payment_key,
+                sale_net_amount: requestPayload.sale_net_amount,
+                sale_gross_amount: requestPayload.sale_gross_amount,
+                sale_cost: requestPayload.sale_cost,
+                sale_date: requestPayload.sale_date
+            }
 
-            // CRIA OS ITEMS PARA A SALE_KEY INFORMADA
-            saleModel.createItems(products, (err, data) => {
-                if(err){
+            // CRIANDO O CABEÇALHO DA VENDA
+            saleModel.createHeader(saleHeader, (err, data) => {
+                if (err) {
                     console.log(err)
                     res.status(500).send({
                         status: 'error',
-                        message: 'An error ocurred in the sale items create'
+                        message: 'An error ocurred in the sale header create'
                     })
                     return
                 }
 
-                if(data.affectedRows > 0){
-                    res.status(201).send({
-                        status: 'success',
-                        message: 'Sale has been created'
-                    })
+                // CHAVE RETORNADA PARA O CABEÇALHO CRIADO
+                const saleKey = data.insertId
 
-                }else{
-                    res.status(500).send({
-                        status: 'error',
-                        message: 'An error ocurred in the sale items create'
-                    })
-                    return
-                }
+                const products = requestPayload.products.map(product => {
+                    return [
+                        saleKey,
+                        product.product_code,
+                        product.product_description,
+                        product.category_key,
+                        product.subcategory_key,
+                        product.color_key,
+                        product.size_key,
+                        product.product_unit_cost,
+                        product.product_quantity,
+                        product.product_unit_amount
+                    ]
+                })
 
-                
+                // CRIA OS ITEMS PARA A SALE_KEY INFORMADA
+                saleModel.createItems(products, (err, data) => {
+                    if (err) {
+                        console.log(err)
+                        res.status(500).send({
+                            status: 'error',
+                            message: 'An error ocurred in the sale items create'
+                        })
+                        return
+                    }
+
+                    if (data.affectedRows > 0) {
+                        res.status(201).send({
+                            status: 'success',
+                            message: 'Sale has been created'
+                        })
+
+                    } else {
+                        res.status(500).send({
+                            status: 'error',
+                            message: 'An error ocurred in the sale items create'
+                        })
+                        return
+                    }
+
+
+                })
             })
+
         })
-        
-    })
 }
 
 // VERIFICA EXISTÊNCIA DO CLIENTE
@@ -209,12 +209,12 @@ exports.validateCreateRequest = (req, res) => {
 // RETORNA O CLIENT_KEY
 const validateClient = async client => {
 
-    if(client.unidentified_client){
+    if (client.unidentified_client) {
         return 1
-    }else{
+    } else {
 
         const response = await axios.post(`${url.loopback}/client/getByFields`, {
-            client_name : client.client_name,
+            client_name: client.client_name,
             client_telephone: client.client_telephone
         }).catch(error => {
             console.log(error)
@@ -225,12 +225,12 @@ const validateClient = async client => {
         const clientData = response.data
 
         // SE RETORNAR O CLIENTE, ATUALIZA COM OS DADOS INFORMADOS
-        if(clientData.length > 0){
-            
+        if (clientData.length > 0) {
+
             const clientKey = clientData[0].client_key
 
             const updatedClient = await axios.put(`${url.loopback}/client/update`, {
-                client_key : clientKey,
+                client_key: clientKey,
                 client_name: client.client_name,
                 client_telephone: client.client_telephone
             }).catch(error => {
@@ -238,16 +238,16 @@ const validateClient = async client => {
                 return false
             })
 
-            if(updatedClient.data.affectedRows >= 1){
+            if (updatedClient.data.affectedRows >= 1) {
                 return clientKey
-            }else{
+            } else {
                 return false
             }
-            
-        // SE NÃO RETORNAR NENHUM CLIENTE, UM SERÁ CRIADO COM OS DADOS INFORMADOS
-        }else{
+
+            // SE NÃO RETORNAR NENHUM CLIENTE, UM SERÁ CRIADO COM OS DADOS INFORMADOS
+        } else {
             const createdClient = await axios.post(`${url.loopback}/client/create`, {
-                client_name : client.client_name,
+                client_name: client.client_name,
                 client_telephone: client.client_telephone
             }).catch(error => {
                 console.log(error)
@@ -260,7 +260,7 @@ const validateClient = async client => {
 }
 
 const validateProductPayload = payload => {
-    
+
     payload = Object.entries(payload)
 
     // CAMPOS OBRIGATÓRIOS NA ESTRUTURA DE PRODUTOS
@@ -296,7 +296,7 @@ const validateProductPayload = payload => {
 
 exports.getSaleByDate = (req, res) => {
 
-    if(!req.body){
+    if (!req.body) {
         res.status(400).send({
             status: 'error',
             message: 'Invalid request body'
@@ -305,7 +305,7 @@ exports.getSaleByDate = (req, res) => {
         return
     }
 
-    if(!req.body.saleDate || req.body.saleDate.length == 0){
+    if (!req.body.saleDate || req.body.saleDate.length == 0) {
         res.status(400).send({
             status: 'error',
             message: 'The property saleDate is not defined or has a invalid value'
@@ -315,7 +315,7 @@ exports.getSaleByDate = (req, res) => {
 
     saleModel.getSaleHeader(req.body.saleDate, (err, data) => {
 
-        if(err){
+        if (err) {
             res.status(500).send({
                 status: 'error',
                 message: 'Internal server error'
@@ -329,8 +329,8 @@ exports.getSaleByDate = (req, res) => {
 }
 
 exports.getDailyInfo = (req, res) => {
-    
-    if(!req.body){
+
+    if (!req.body) {
         res.status(400).send({
             status: 'error',
             message: 'Invalid request body'
@@ -339,7 +339,7 @@ exports.getDailyInfo = (req, res) => {
         return
     }
 
-    if(!req.body.saleDate || req.body.saleDate.length == 0){
+    if (!req.body.saleDate || req.body.saleDate.length == 0) {
         res.status(400).send({
             status: 'error',
             message: 'The property saleDate is not defined or has a invalid value'
@@ -349,7 +349,7 @@ exports.getDailyInfo = (req, res) => {
 
     saleModel.getDailyInfo(req.body.saleDate, (err, data) => {
 
-        if(err){
+        if (err) {
             res.status(500).send({
                 status: 'error',
                 message: 'Internal server error'
@@ -362,7 +362,7 @@ exports.getDailyInfo = (req, res) => {
 }
 
 exports.findDailySales = (req, res) => {
-    if(!req.body){
+    if (!req.body) {
         res.status(400).send({
             status: 'error',
             message: 'Invalid request body'
@@ -370,17 +370,37 @@ exports.findDailySales = (req, res) => {
         return
     }
 
-    if(req.body.startDate.length == 0 || req.body.finishDate.length == 0){
-        res.status(400).send({
-            status: 'error',
-            message: 'Required fields is not defined or has invalid value'
+    const requiredFields = ['startDate', 'finishDate']
+
+    const requestFields = Object.entries(req.body)
+
+    let stopCondition = false
+
+    for (requiredField of requiredFields) {
+
+        const searchedField = requestFields.find(field => {
+            if (field[0] == requiredField) {
+                return field
+            }
         })
+
+        if (searchedField === undefined || searchedField[1].length == 0) {
+            res.status(400).send({
+                status: 'error',
+                message: `The field ${requiredField} is not defined or has a invalid value`
+            })
+            stopCondition = true
+            break
+        }
+    }
+
+    if (stopCondition === true) {
         return
     }
 
     saleModel.getDailySales(req.body.startDate, req.body.finishDate, (err, data) => {
 
-        if(err){
+        if (err) {
             res.status(500).send({
                 status: 'error',
                 message: 'Internal server error'
@@ -393,7 +413,7 @@ exports.findDailySales = (req, res) => {
 }
 
 exports.findSalePerWeekday = (req, res) => {
-    if(!req.body){
+    if (!req.body) {
         res.status(400).send({
             status: 'error',
             message: 'Invalid request body'
@@ -401,17 +421,242 @@ exports.findSalePerWeekday = (req, res) => {
         return
     }
 
-    if(req.body.startDate.length == 0 || req.body.finishDate.length == 0){
-        res.status(400).send({
-            status: 'error',
-            message: 'Required fields is not defined or has invalid value'
+    const requiredFields = ['startDate', 'finishDate']
+
+    const requestFields = Object.entries(req.body)
+
+    let stopCondition = false
+
+    for (requiredField of requiredFields) {
+
+        const searchedField = requestFields.find(field => {
+            if (field[0] == requiredField) {
+                return field
+            }
         })
+
+        if (searchedField === undefined || searchedField[1].length == 0) {
+            res.status(400).send({
+                status: 'error',
+                message: `The field ${requiredField} is not defined or has a invalid value`
+            })
+            stopCondition = true
+            break
+        }
+    }
+
+    if (stopCondition === true) {
         return
     }
 
     saleModel.getSalePerWeekDay(req.body.startDate, req.body.finishDate, (err, data) => {
 
-        if(err){
+        if (err) {
+            res.status(500).send({
+                status: 'error',
+                message: 'Internal server error'
+            })
+            return
+        }
+
+        res.status(200).send(data)
+    })
+}
+
+exports.findColorsPerPeriod = (req, res) => {
+    if (!req.body) {
+        res.status(400).send({
+            status: 'error',
+            message: 'Invalid request body'
+        })
+        return
+    }
+
+    const requiredFields = ['startDate', 'finishDate']
+
+    const requestFields = Object.entries(req.body)
+
+    let stopCondition = false
+
+    for (requiredField of requiredFields) {
+
+        const searchedField = requestFields.find(field => {
+            if (field[0] == requiredField) {
+                return field
+            }
+        })
+
+        if (searchedField === undefined || searchedField[1].length == 0) {
+            res.status(400).send({
+                status: 'error',
+                message: `The field ${requiredField} is not defined or has a invalid value`
+            })
+            stopCondition = true
+            break
+        }
+    }
+
+    if (stopCondition === true) {
+        return
+    }
+
+    saleModel.getColorsPerPeriod(req.body, (err, data) => {
+
+        if (err) {
+            res.status(500).send({
+                status: 'error',
+                message: 'Internal server error'
+            })
+            return
+        }
+
+        res.status(200).send(data)
+    })
+}
+
+exports.findSizesPerPeriod = (req, res) => {
+    if (!req.body) {
+        res.status(400).send({
+            status: 'error',
+            message: 'Invalid request body'
+        })
+        return
+    }
+
+    const requiredFields = ['startDate', 'finishDate']
+
+    const requestFields = Object.entries(req.body)
+
+    let stopCondition = false
+
+    for (requiredField of requiredFields) {
+
+        const searchedField = requestFields.find(field => {
+            if (field[0] == requiredField) {
+                return field
+            }
+        })
+
+        if (searchedField === undefined || searchedField[1].length == 0) {
+            res.status(400).send({
+                status: 'error',
+                message: `The field ${requiredField} is not defined or has a invalid value`
+            })
+            stopCondition = true
+            break
+        }
+    }
+
+    if (stopCondition === true) {
+        return
+    }
+
+    saleModel.getSizesPerPeriod(req.body, (err, data) => {
+
+        if (err) {
+            res.status(500).send({
+                status: 'error',
+                message: 'Internal server error'
+            })
+            return
+        }
+
+        res.status(200).send(data)
+    })
+}
+
+exports.findTotalSalePerPeriod = (req, res) => {
+
+    if (!req.body) {
+        res.status(400).send({
+            status: 'error',
+            message: 'Invalid request body'
+        })
+        return
+    }
+
+    const requiredFields = ['startDate', 'finishDate']
+
+    const requestFields = Object.entries(req.body)
+
+    let stopCondition = false
+
+    for (requiredField of requiredFields) {
+
+        const searchedField = requestFields.find(field => {
+            if (field[0] == requiredField) {
+                return field
+            }
+        })
+
+        if (searchedField === undefined || searchedField[1].length == 0) {
+            res.status(400).send({
+                status: 'error',
+                message: `The field ${requiredField} is not defined or has a invalid value`
+            })
+            stopCondition = true
+            break
+        }
+    }
+
+    if (stopCondition === true) {
+        return
+    }
+
+    saleModel.getTotalSalePerPeriod(req.body, (err, data) => {
+
+        if (err) {
+            res.status(500).send({
+                status: 'error',
+                message: 'Internal server error'
+            })
+            return
+        }
+
+        res.status(200).send(data[0])
+    })
+}
+
+exports.findItemsPerPeriod = (req, res) => {
+    if (!req.body) {
+        res.status(400).send({
+            status: 'error',
+            message: 'Invalid request body'
+        })
+        return
+    }
+
+    const requiredFields = ['startDate', 'finishDate']
+
+    const requestFields = Object.entries(req.body)
+
+    let stopCondition = false
+
+    for (requiredField of requiredFields) {
+
+        const searchedField = requestFields.find(field => {
+            if (field[0] == requiredField) {
+                return field
+            }
+        })
+
+        if (searchedField === undefined || searchedField[1].length == 0) {
+            res.status(400).send({
+                status: 'error',
+                message: `The field ${requiredField} is not defined or has a invalid value`
+            })
+            stopCondition = true
+            break
+        }
+    }
+
+    if (stopCondition === true) {
+        return
+    }
+
+    saleModel.getItemsPerPeriod(req.body, (err, data) => {
+
+        if (err) {
             res.status(500).send({
                 status: 'error',
                 message: 'Internal server error'

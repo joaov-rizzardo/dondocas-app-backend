@@ -261,3 +261,55 @@ exports.getAmountByCategory = (req, res) => {
     })
 }
 
+exports.findTotalExpensePerPeriod = (req, res) => {
+
+    if (!req.body) {
+        res.status(400).send({
+            status: 'error',
+            message: 'Invalid request body'
+        })
+        return
+    }
+
+    const requiredFields = ['startDate', 'finishDate']
+
+    const requestFields = Object.entries(req.body)
+
+    let stopCondition = false
+
+    for (requiredField of requiredFields) {
+
+        const searchedField = requestFields.find(field => {
+            if (field[0] == requiredField) {
+                return field
+            }
+        })
+
+        if (searchedField === undefined || searchedField[1].length == 0) {
+            res.status(400).send({
+                status: 'error',
+                message: `The field ${requiredField} is not defined or has a invalid value`
+            })
+            stopCondition = true
+            break
+        }
+    }
+
+    if (stopCondition === true) {
+        return
+    }
+
+    expenseModel.getTotalExpensePerPeriod(req.body, (err, data) => {
+
+        if (err) {
+            res.status(500).send({
+                status: 'error',
+                message: 'Internal server error'
+            })
+            return
+        }
+
+        res.status(200).send(data[0])
+    })
+}
+

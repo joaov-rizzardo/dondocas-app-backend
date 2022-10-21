@@ -91,3 +91,84 @@ exports.getSalePerWeekDay = (startDate, finishDate, result) => {
         result(null, res)
     })
 }
+
+exports.getColorsPerPeriod = (data, result) => {
+
+    let query = "SELECT c.color_description AS 'color', COUNT(*) AS 'quantity' FROM sale AS s INNER JOIN sale_item AS si ON s.sale_key = si.sale_key INNER JOIN colors AS c ON si.color_key = c.color_key WHERE sale_date BETWEEN ? AND ?"
+
+    let params = [data.startDate + ' 00:00:00', data.finishDate + ' 23:59:59']
+
+    if(data.category && data.category.length != 0){
+        query += " AND si.category_key = ?"
+        params.push(data.category)
+    }
+
+    if(data.subcategory && data.subcategory.length != 0){
+        query += " AND si.subcategory_key = ?"
+        params.push(data.subcategory)
+    }
+
+    query += "GROUP BY si.color_key"
+
+    sql.query(query, params, (err, res) => {
+        if (err) {
+            result(err, null)
+            return
+        }
+
+        result(null, res)
+    })
+}
+
+exports.getSizesPerPeriod = (data, result) => {
+
+    let query = "SELECT ps.size_description AS 'size', COUNT(*) AS 'quantity' FROM sale AS s INNER JOIN sale_item AS si ON s.sale_key = si.sale_key INNER JOIN product_sizes AS ps ON si.size_key = ps.size_key WHERE sale_date BETWEEN ? AND ?"
+
+    let params = [data.startDate + ' 00:00:00', data.finishDate + ' 23:59:59']
+
+    if(data.category && data.category.length != 0){
+        query += " AND si.category_key = ?"
+        params.push(data.category)
+    }
+
+    if(data.subcategory && data.subcategory.length != 0){
+        query += " AND si.subcategory_key = ?"
+        params.push(data.subcategory)
+    }
+
+    query += "GROUP BY si.size_key"
+
+    sql.query(query, params, (err, res) => {
+        if (err) {
+            result(err, null)
+            return
+        }
+
+        result(null, res)
+    })
+}
+
+
+exports.getTotalSalePerPeriod = (data, result) => {
+    sql.query("SELECT SUM(sale_net_amount) AS 'totalAmount' FROM sale WHERE sale_date BETWEEN ? AND ?", [data.startDate + ' 00:00:00', data.finishDate + ' 23:59:59'], (err, res) => {
+        if (err) {
+            result(err, null)
+            return
+        }
+
+        result(null, res)
+    })
+}
+
+exports.getItemsPerPeriod = (data, result) => {
+    sql.query("SELECT ps.subcategory_description AS 'subcategory', COUNT(*) AS 'quantity' FROM sale AS s INNER JOIN sale_item AS si ON s.sale_key = si.sale_key INNER JOIN product_subcategory AS ps ON si.subcategory_key = ps.subcategory_key WHERE sale_date BETWEEN ? AND ? GROUP BY si.subcategory_key", [data.startDate + ' 00:00:00', data.finishDate + ' 23:59:59'], (err, res) => {
+        if (err) {
+            result(err, null)
+            return
+        }
+
+        result(null, res)
+    })
+}
+
+

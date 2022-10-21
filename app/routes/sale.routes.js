@@ -26,6 +26,14 @@ module.exports = app => {
     router.post('/dailySales', saleController.findDailySales)
 
     router.post('/salePerWeekday', saleController.findSalePerWeekday)
+
+    router.post('/colorsPerPeriod', saleController.findColorsPerPeriod)
+
+    router.post('/sizesPerPeriod', saleController.findSizesPerPeriod)
+
+    router.post('/totalSalePerPeriod', saleController.findTotalSalePerPeriod)
+
+    router.post('/itemsPerPeriod', saleController.findItemsPerPeriod)
   
     app.use('/sale', router);
   };
