@@ -150,7 +150,7 @@ exports.getSizesPerPeriod = (data, result) => {
 
 
 exports.getTotalSalePerPeriod = (data, result) => {
-    sql.query("SELECT SUM(sale_net_amount) AS 'totalAmount' FROM sale WHERE sale_date BETWEEN ? AND ?", [data.startDate + ' 00:00:00', data.finishDate + ' 23:59:59'], (err, res) => {
+    sql.query("SELECT IFNULL(SUM(sale_net_amount), 0) AS 'totalAmount' FROM sale WHERE sale_date BETWEEN ? AND ?", [data.startDate + ' 00:00:00', data.finishDate + ' 23:59:59'], (err, res) => {
         if (err) {
             result(err, null)
             return
