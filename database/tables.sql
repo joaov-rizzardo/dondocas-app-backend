@@ -112,3 +112,16 @@ CREATE TABLE IF NOT EXISTS expense (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE INDEX idx_expense_status ON expense(expense_status);
+
+CREATE TABLE IF NOT EXISTS provider (
+    provider_key INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    provider_name VARCHAR(50) NOT NULL,
+    provider_telephone VARCHAR(15),
+    provider_email VARCHAR(80),
+    provider_category INT NOT NULL,
+    provider_site VARCHAR(80),
+    provider_status VARCHAR(1) DEFAULT 'A',
+    provider_date DATETIME DEFAULT current_timestamp,
+    FOREIGN KEY (provider_category) REFERENCES product_category(category_key),
+    KEY idx_provider_status (provider_status)
+)

@@ -9,3 +9,8 @@ CREATE VIEW vw_exp_gp_categ AS
 SELECT e.expense_value, e.category_key, ec.category_description , e.expense_date
 FROM expense AS e INNER JOIN expense_category AS ec ON (e.category_key = ec.category_key)
 WHERE expense_status = 'A'
+
+CREATE VIEW vw_provider AS
+SELECT p.*, pc.category_description AS provider_category_description 
+FROM provider AS p INNER JOIN product_category AS pc ON p.provider_category = pc.category_key
+WHERE p.provider_status = 'A'
