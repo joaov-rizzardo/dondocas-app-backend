@@ -22,6 +22,8 @@ module.exports = app => {
     router.post('/create', providerController.create)
 
     router.put('/update', providerController.update)
+
+    router.put('/inactivate', providerController.inactivate)
     
     app.use('/provider', router);
   };

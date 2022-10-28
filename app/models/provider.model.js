@@ -32,3 +32,14 @@ exports.updateProvider = (args, result) => {
         result(null, res)
     })
 }
+
+exports.inactivateProvider = (args, result) => {
+    sql.query("UPDATE provider SET provider_status = 'I' WHERE provider_key = ?", [args.providerKey], (err, res) => {
+        if(err){
+            result(err, null)
+            console.log(err)
+            return
+        }
+        result(null, res)
+    })
+}
