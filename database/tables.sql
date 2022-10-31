@@ -124,4 +124,26 @@ CREATE TABLE IF NOT EXISTS provider (
     provider_date DATETIME DEFAULT current_timestamp,
     FOREIGN KEY (provider_category) REFERENCES product_category(category_key),
     KEY idx_provider_status (provider_status)
-)
+);
+
+CREATE TABLE IF NOT EXISTS user_profile(
+	profile_key INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    profile_description VARCHAR(50) NOT NULL,
+    profile_level TINYINT NOT NULL,
+    profile_status VARCHAR(1) DEFAULT 'A',
+    KEY idx_profile_level (profile_level),
+    KEY idx_profile_status (profile_status)
+);
+
+CREATE TABLE IF NOT EXISTS user (
+	user_key INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    user_identification VARCHAR(40) NOT NULL,
+    user_password VARCHAR(100) NOT NULL,
+    user_name VARCHAR(50) NOT NULL,
+    user_profile INT NOT NULL,
+    user_status VARCHAR(1) DEFAULT 'A',
+    FOREIGN KEY (user_profile) REFERENCES user_profile(profile_key),
+    KEY idx_user_identification (user_identification),
+    KEY idx_user_password (user_password),
+    KEY idx_user_status (user_status)
+);

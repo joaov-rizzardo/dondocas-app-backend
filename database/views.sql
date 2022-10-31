@@ -14,3 +14,8 @@ CREATE VIEW vw_provider AS
 SELECT p.*, pc.category_description AS provider_category_description 
 FROM provider AS p INNER JOIN product_category AS pc ON p.provider_category = pc.category_key
 WHERE p.provider_status = 'A'
+
+CREATE VIEW vw_user AS
+SELECT u.*, up.profile_description, up.profile_level FROM user AS u 
+INNER JOIN user_profile AS up ON (u.user_profile = up.profile_key)
+WHERE u.user_status = 'A'

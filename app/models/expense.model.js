@@ -124,7 +124,7 @@ exports.findAmountByCategory = (args, result) => {
 }
 
 exports.getTotalExpensePerPeriod = (data, result) => {
-    sql.query("SELECT IFNULL(SUM(expense_value), 0) AS 'totalAmount' from expense WHERE expense_date BETWEEN ? AND ?", [data.startDate + ' 00:00:00', data.finishDate + ' 23:59:59'], (err, res) => {
+    sql.query("SELECT IFNULL(SUM(expense_value), 0) AS 'totalAmount' from expense WHERE expense_date BETWEEN ? AND ? AND expense_status = 'A'", [data.startDate + ' 00:00:00', data.finishDate + ' 23:59:59'], (err, res) => {
         if (err) {
             result(err, null)
             return

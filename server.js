@@ -26,6 +26,7 @@ require("./app/routes/sale.routes.js")(app)
 require("./app/routes/client.routes.js")(app)
 require("./app/routes/expense.routes.js")(app)
 require("./app/routes/provider.routes.js")(app)
+require("./app/routes/user.routes.js")(app)
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
