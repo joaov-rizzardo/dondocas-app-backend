@@ -24,6 +24,7 @@ exports.createUser = (params, result) => {
 exports.getUser = (identification, result) => {
     sql.query("SELECT * FROM vw_user WHERE user_identification = ?", [identification], (err, res) => {
         if(err){
+            console.log(err)
             result(err, null)
             return
         }
