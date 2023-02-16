@@ -1,0 +1,1 @@
+ALTER TABLE sale ADD COLUMN sale_status VARCHAR(1) DEFAULT 'A'
